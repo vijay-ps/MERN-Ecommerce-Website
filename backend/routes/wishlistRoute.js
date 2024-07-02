@@ -45,5 +45,32 @@ router.get(
     }
   })
 );
-
+router.delete(
+  "/:id/:productId",
+  requireSignIn,
+  catchAsync(async (req, res) => {
+    try {
+      const { id,productId } = req.params;
+      console.log(id,productId)
+      const wishlist = await Wishlist.findOneAndDelete({userId:id,productId:productId});
+      if (wishlist) {
+        res.send({
+          status: "Success",
+          message: "Deletion Success",
+        });
+      } else {
+        res.status(404).send({
+          status: "failed",
+          message: "Wishlist item not found",
+        });
+      }
+    } catch (error) {
+      res.send({
+        status: "failed",
+        error,
+        message: "Something Went Wrong",
+      });
+    }
+  })
+);
 module.exports = router
